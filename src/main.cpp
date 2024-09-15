@@ -9,7 +9,7 @@ void addon_load(AddonAPI *api_p);
 void addon_unload();
 void addon_render();
 void addon_options();
-// UINT wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+UINT wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 BOOL APIENTRY dll_main(const HMODULE hModule, const DWORD ul_reason_for_call, LPVOID lpReserved)
 {
@@ -29,7 +29,7 @@ BOOL APIENTRY dll_main(const HMODULE hModule, const DWORD ul_reason_for_call, LP
 // NOLINTNEXTLINE(readability-identifier-naming)
 extern "C" __declspec(dllexport) AddonDefinition *GetAddonDef()
 {
-    addon_def.Signature = -9999999; // TODO: change this to a random number
+    addon_def.Signature = -9831745;
     addon_def.APIVersion = NEXUS_API_VERSION;
     addon_def.Name = addon_name;
     addon_def.Version.Major = 0;
@@ -37,12 +37,12 @@ extern "C" __declspec(dllexport) AddonDefinition *GetAddonDef()
     addon_def.Version.Build = 0;
     addon_def.Version.Revision = 0;
     addon_def.Author = "Seres67";
-    addon_def.Description = "An addon template! Read & change every todos in the code"; // TODO: change this
+    addon_def.Description = "Displays mouse movement in an overlay.";
     addon_def.Load = addon_load;
     addon_def.Unload = addon_unload;
     addon_def.Flags = EAddonFlags_None;
     addon_def.Provider = EUpdateProvider_GitHub;
-    addon_def.UpdateLink = nullptr; // TODO: change this
+    addon_def.UpdateLink = "https://github.com/Seres67/nexus_mouse_overlay";
 
     return &addon_def;
 }
@@ -57,9 +57,9 @@ void addon_load(AddonAPI *api_p)
 
     api->Renderer.Register(ERenderType_Render, addon_render);
     api->Renderer.Register(ERenderType_OptionsRender, addon_options);
-    // api->WndProc.Register(wnd_proc);
+    api->WndProc.Register(wnd_proc);
 
-    Settings::settings_path = api->Paths.GetAddonDirectory("template\\settings.json"); //TODO: change this
+    Settings::settings_path = api->Paths.GetAddonDirectory("mouse_overlay\\settings.json");
     if (std::filesystem::exists(Settings::settings_path)) {
         Settings::load(Settings::settings_path);
     } /*else {
@@ -74,18 +74,26 @@ void addon_unload()
     api->Log(ELogLevel_INFO, addon_name, "unloading addon...");
     api->Renderer.Deregister(addon_render);
     api->Renderer.Deregister(addon_options);
-    //api->WndProc.Deregister(wnd_proc);
+    api->WndProc.Deregister(wnd_proc);
     api->Log(ELogLevel_INFO, addon_name, "addon unloaded!");
     api = nullptr;
 }
 
-void addon_render() { render_window(); }
+void addon_render() {
+    ImGui::SetNextWindowSize(ImVec2(300, 400), ImGuiCond_FirstUseEver);
+    render_window(); }
 
 void addon_options() { render_options(); }
 
-// UINT wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-// {
-//     if (!game_handle)
-//         game_handle = hWnd;
-//     return uMsg;
-// }
+UINT wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    if (!game_handle)
+        game_handle = hWnd;
+    if (uMsg == WM_MOUSEMOVE) {
+        last_pos = current_pos;
+        GetCursorPos(&current_pos);
+        diff.x = current_pos.x - last_pos.x;
+        diff.y = current_pos.y - last_pos.y;
+    }
+    return uMsg;
+}

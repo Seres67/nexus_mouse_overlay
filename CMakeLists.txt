@@ -24,21 +24,21 @@ if (UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -O2")
 endif ()
 
-project(nexus_template)
+project(nexus_mouse_overlay)
 
 include_directories(include)
 
 # load imgui as a cmake project
 add_subdirectory(src/imgui)
 
-add_library(nexus_template SHARED src/main.cpp src/globals.cpp src/gui.cpp src/settings.cpp)
-target_link_libraries(nexus_template PRIVATE imgui)
-set_property(TARGET nexus_template PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+add_library(nexus_mouse_overlay SHARED src/main.cpp src/globals.cpp src/gui.cpp src/settings.cpp)
+target_link_libraries(nexus_mouse_overlay PRIVATE imgui)
+set_property(TARGET nexus_mouse_overlay PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 # copy dll to game directory
-add_custom_command(TARGET nexus_template
+add_custom_command(TARGET nexus_mouse_overlay
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:nexus_template>
-        "C:\\Games\\Guild Wars 2\\addons\\nexus_template.dll.update"
-        COMMENT "Copying nexus_template.dll.update to game directory"
+        $<TARGET_FILE:nexus_mouse_overlay>
+        "C:\\Games\\Guild Wars 2\\addons\\nexus_mouse_overlay.dll.update"
+        COMMENT "Copying nexus_mouse_overlay.dll.update to game directory"
 )

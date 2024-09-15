@@ -14,4 +14,8 @@ extern char addon_name[];
 
 extern HWND game_handle;
 
+extern POINT diff;
+extern POINT last_pos;
+extern POINT current_pos;
+
 #endif // GLOBALS_HPP
