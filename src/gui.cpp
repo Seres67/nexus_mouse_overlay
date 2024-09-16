@@ -33,7 +33,7 @@ void render_window()
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground |
                              ImGuiWindowFlags_NoResize;
     if (Settings::lock_position) {
-        flags |= ImGuiWindowFlags_NoMove;
+        flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoInputs;
     }
     if (tmp_open && ImGui::Begin("Mouse Overlay##MouseOverlayMainWindow", &tmp_open, flags)) {
         render_circle();
