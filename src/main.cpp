@@ -35,7 +35,7 @@ extern "C" __declspec(dllexport) AddonDefinition *GetAddonDef()
     addon_def.Version.Major = 0;
     addon_def.Version.Minor = 1;
     addon_def.Version.Build = 0;
-    addon_def.Version.Revision = 0;
+    addon_def.Version.Revision = 1;
     addon_def.Author = "Seres67";
     addon_def.Description = "Displays mouse movement in an overlay.";
     addon_def.Load = addon_load;
@@ -79,21 +79,20 @@ void addon_unload()
     api = nullptr;
 }
 
-void addon_render() {
-    ImGui::SetNextWindowSize(ImVec2(300, 400), ImGuiCond_FirstUseEver);
-    render_window(); }
+void addon_render() { render_window(); }
 
 void addon_options() { render_options(); }
 
+std::chrono::system_clock::time_point last_update = std::chrono::system_clock::now();
 UINT wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if (!game_handle)
         game_handle = hWnd;
     if (uMsg == WM_MOUSEMOVE) {
-        last_pos = current_pos;
-        GetCursorPos(&current_pos);
-        diff.x = current_pos.x - last_pos.x;
-        diff.y = current_pos.y - last_pos.y;
+            last_pos = current_pos;
+            GetCursorPos(&current_pos);
+            diff.x = current_pos.x - last_pos.x;
+            diff.y = current_pos.y - last_pos.y;
     }
     return uMsg;
 }
